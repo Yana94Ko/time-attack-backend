@@ -1,0 +1,36 @@
+{
+  "name": "xx",
+  "version": "1.0.0",
+  "description": "udemy BE time-attack XX",
+  "main": "app.ts/app.js",
+  "scripts": {
+    "dev": "concurrently \"tsc --watch --project tsconfig.json\"  \"node --watch ./dist/app.js\"",
+    "prebuild": "npx prisma generate",
+    "build": "tsc --project tsconfig.json",
+    "start": "node --watch ./dist/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Yana94Ko/time-attack-backend.git"
+  },
+  "keywords": [
+    "xx",
+    "x",
+    "node",
+    "express.js",
+    "project",
+    "prisma",
+    "typescript"
+  ],
+  "author": "Yana94Ko",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Yana94Ko/time-attack-backend/issues"
+  },
+  "homepage": "https://github.com/Yana94Ko/time-attack-backend#readme",
+  "devDependencies": {
+    "@types/node": "^20.11.20",
+    "concurrently": "^8.2.2",
+    "typescript": "^5.3.3"
+  }
+}
