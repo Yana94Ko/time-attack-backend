@@ -53,7 +53,10 @@ const updateUserProfile = async (
   const dto: UserUpdateDto = { ...data, currentUser: user };
   return await userModel.updateUserProfile(dto);
 };
+const getUser = (userId: number) => {
+  return userModel.getUser(userId);
+};
 
-const userService = { signUp, logIn, updateUserProfile };
+const userService = { signUp, logIn, updateUserProfile, getUser };
 
 export default userService;

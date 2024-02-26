@@ -49,11 +49,24 @@ const updateUserProfile = async (dto: UserUpdateDto) => {
   });
 };
 
+const getUser = (id: number) => {
+  return prismaClient.user.findUnique({
+    where: { id },
+    include: {
+      tweet: { orderBy: { createdAt: "desc" } },
+      profile: {
+        select: { nickName: true, followersCount: true, followingCount: true },
+      },
+    },
+  });
+};
+
 const userModel = {
   findByEmail,
   verifyPassword,
   createAccessToken,
   getUserByAccessToken,
   updateUserProfile,
+  getUser,
 };
 export default userModel;

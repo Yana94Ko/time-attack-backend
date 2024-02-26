@@ -59,4 +59,9 @@ userController.put("", authGuard, async (req, res, _) => {
   res.json(await userService.updateUserProfile(data, user));
 });
 
+userController.get("/:userId", async (req, res, _) => {
+  const { userId } = req.params;
+  res.json(await userService.getUser(Number(userId)));
+});
+
 export default userController;
