@@ -77,3 +77,7 @@
 - 인증
   - AccessToken(JWT)을 Bearer 토큰으로 사용하는 방식
   - 토큰 만료는 발급일시를 기준으로 2시간 뒤
+
+## ERD 설계
+
+![](./public/xx_erd_v1.png)

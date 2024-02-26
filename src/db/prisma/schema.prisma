@@ -1,0 +1,91 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         BigInt           @id @default(autoincrement())
+  email      String           @unique
+  password   String
+  profile    Profile?
+  bookmark   Bookmark[]
+  twitt      Twitt[]
+  comment    Comment[]
+  followings UserConnection[] @relation(name: "targetUser")
+  fallowers  UserConnection[] @relation(name: "follower")
+  createdAt  DateTime         @default(now())
+}
+
+model Profile {
+  userId         BigInt    @id
+  user           User      @relation(fields: [userId], references: [id])
+  followersCount Int
+  followingCount Int
+  nickName       String
+  discription    String
+  birth          DateTime?
+  profileImgSrc  String?
+  bgImgSrc       String?
+  location       String?
+  updatedAt      DateTime  @updatedAt
+}
+
+model UserConnection {
+  id           BigInt           @id @default(autoincrement())
+  targetUser   User             @relation(name: "targetUser", fields: [targetUserId], references: [id])
+  follower     User             @relation(name: "follower", fields: [followerId], references: [id])
+  status       ConnectionStatus
+  targetUserId BigInt
+  followerId   BigInt
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  @@unique([targetUserId, followerId])
+}
+
+model Bookmark {
+  id        BigInt   @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  twitt     Twitt    @relation(fields: [twittId], references: [id])
+  userId    BigInt
+  twittId   BigInt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Twitt {
+  id        BigInt     @id @default(autoincrement())
+  author    User       @relation(fields: [authorId], references: [id])
+  authorId  BigInt
+  text      String
+  bookmark  Bookmark[]
+  comment   Comment[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Comment {
+  id          BigInt   @id @default(autoincrement())
+  author      User     @relation(fields: [commentorId], references: [id])
+  twitt       Twitt    @relation(fields: [twittId], references: [id])
+  commentorId BigInt
+  twittId     BigInt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum ConnectionStatus {
+  blocking
+  following
+  muting
+}
