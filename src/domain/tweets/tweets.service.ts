@@ -8,6 +8,13 @@ import {
 } from "./tweets.dto";
 import tweetModel from "./tweets.model";
 
+const getTweet = (tweetId: number) => {
+  return tweetModel.getTweet(tweetId);
+};
+const getTweets = () => {
+  return tweetModel.getTweets();
+};
+
 const writeTweet = async (
   data: TweetCreateData,
   user: Pick<User, "id" | "email">
@@ -38,6 +45,12 @@ const deleteTweet = async (
   return await tweetModel.deleteTweet(dto);
 };
 
-const tweetsService = { deleteTweet, writeTweet, updateTweet };
+const tweetsService = {
+  deleteTweet,
+  writeTweet,
+  updateTweet,
+  getTweet,
+  getTweets,
+};
 
 export default tweetsService;

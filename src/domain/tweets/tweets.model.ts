@@ -1,7 +1,20 @@
 import prismaClient from "../../db/prisma/client.prisma";
 import { TweetCreateDto, TweetDeleteDto, TweetUpdateDto } from "./tweets.dto";
 
-const createTweet = async (dto: TweetCreateDto) => {
+const getTweet = (tweetId: number) => {
+  return prismaClient.tweet.findUnique({
+    where: { id: tweetId },
+    include: { comment: true },
+  });
+};
+const getTweets = () => {
+  return prismaClient.tweet.findMany({
+    orderBy: { createdAt: "desc" },
+    include: { comment: true },
+  });
+};
+
+const writeTweet = async (dto: TweetCreateDto) => {
   const { text, authorId } = dto;
   return await prismaClient.tweet.create({ data: { text, authorId } });
 };
@@ -36,5 +49,11 @@ const deleteTweet = async (dto: TweetDeleteDto) => {
   return `delete success tweet id : ${tweet.id}, ${tweet.text} `;
 };
 
-const tweetModel = { createTweet, updateTweet, deleteTweet };
+const tweetModel = {
+  createTweet: writeTweet,
+  updateTweet,
+  deleteTweet,
+  getTweets,
+  getTweet,
+};
 export default tweetModel;

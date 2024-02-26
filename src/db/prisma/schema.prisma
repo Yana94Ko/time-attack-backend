@@ -76,9 +76,10 @@ model Tweet {
 
 model Comment {
   id          Int      @id @default(autoincrement())
-  author      User     @relation(fields: [commentorId], references: [id])
+  content     String
+  commenter   User     @relation(fields: [commenterId], references: [id])
   tweet       Tweet    @relation(fields: [tweetId], references: [id])
-  commentorId Int
+  commenterId Int
   tweetId     Int
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
