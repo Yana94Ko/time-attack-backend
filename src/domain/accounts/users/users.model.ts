@@ -1,7 +1,8 @@
-import { User } from "@prisma/client";
+import { Prisma, User } from "@prisma/client";
 import { compare } from "bcrypt";
 import jwt from "jsonwebtoken";
 import prismaClient from "../../../db/prisma/client.prisma";
+import { UserUpdateDto } from "./users.dto";
 
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 if (!JWT_SECRET_KEY) throw new Error("JWT_SECRET_KEY NotFound");
@@ -30,11 +31,29 @@ const getUserByAccessToken = async (accessToken: string) => {
   const { sub: id } = jwt.verify(accessToken, JWT_SECRET_KEY);
   return await findById(Number(id));
 };
+const updateUserProfile = async (dto: UserUpdateDto) => {
+  const existingUser = await prismaClient.profile.findUnique({
+    where: {
+      userId: dto.currentUser.id,
+    },
+  });
+  if (!existingUser) throw new Error("User Not Found");
+
+  const data: Prisma.ProfileUncheckedUpdateInput = {
+    nickName: dto.nickName ? dto.nickName : existingUser.nickName,
+    description: dto.description ? dto.description : existingUser.description,
+  };
+  return await prismaClient.profile.update({
+    where: { userId: dto.currentUser.id },
+    data,
+  });
+};
 
 const userModel = {
   findByEmail,
   verifyPassword,
   createAccessToken,
   getUserByAccessToken,
+  updateUserProfile,
 };
 export default userModel;

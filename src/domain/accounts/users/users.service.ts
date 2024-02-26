@@ -1,6 +1,12 @@
+import { User } from "@prisma/client";
 import { hash } from "bcrypt";
 import prismaClient from "../../../db/prisma/client.prisma";
-import { UserLogInDto, UserSignUpDto } from "./users.dto";
+import {
+  UserLogInDto,
+  UserSignUpDto,
+  UserUpdateData,
+  UserUpdateDto,
+} from "./users.dto";
 import userModel from "./users.model";
 
 const signUp = async (dto: UserSignUpDto) => {
@@ -40,6 +46,14 @@ const logIn = async (dto: UserLogInDto) => {
   return await userModel.createAccessToken(user);
 };
 
-const userService = { signUp, logIn };
+const updateUserProfile = async (
+  data: UserUpdateData,
+  user: Pick<User, "id" | "email">
+) => {
+  const dto: UserUpdateDto = { ...data, currentUser: user };
+  return await userModel.updateUserProfile(dto);
+};
+
+const userService = { signUp, logIn, updateUserProfile };
 
 export default userService;
