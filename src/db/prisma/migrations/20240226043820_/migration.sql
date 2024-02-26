@@ -3,9 +3,9 @@ CREATE TYPE "ConnectionStatus" AS ENUM ('blocking', 'following', 'muting');
 
 -- CreateTable
 CREATE TABLE "User" (
-    "id" BIGSERIAL NOT NULL,
+    "id" SERIAL NOT NULL,
     "email" TEXT NOT NULL,
-    "password" TEXT NOT NULL,
+    "encryptedPassword" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
@@ -13,11 +13,11 @@ CREATE TABLE "User" (
 
 -- CreateTable
 CREATE TABLE "Profile" (
-    "userId" BIGINT NOT NULL,
-    "followersCount" INTEGER NOT NULL,
-    "followingCount" INTEGER NOT NULL,
+    "userId" INTEGER NOT NULL,
+    "followersCount" INTEGER NOT NULL DEFAULT 0,
+    "followingCount" INTEGER NOT NULL DEFAULT 0,
     "nickName" TEXT NOT NULL,
-    "discription" TEXT NOT NULL,
+    "discription" TEXT NOT NULL DEFAULT '',
     "birth" TIMESTAMP(3),
     "profileImgSrc" TEXT,
     "bgImgSrc" TEXT,
@@ -29,10 +29,10 @@ CREATE TABLE "Profile" (
 
 -- CreateTable
 CREATE TABLE "UserConnection" (
-    "id" BIGSERIAL NOT NULL,
+    "id" SERIAL NOT NULL,
     "status" "ConnectionStatus" NOT NULL,
-    "targetUserId" BIGINT NOT NULL,
-    "followerId" BIGINT NOT NULL,
+    "targetUserId" INTEGER NOT NULL,
+    "followerId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -41,9 +41,9 @@ CREATE TABLE "UserConnection" (
 
 -- CreateTable
 CREATE TABLE "Bookmark" (
-    "id" BIGSERIAL NOT NULL,
-    "userId" BIGINT NOT NULL,
-    "twittId" BIGINT NOT NULL,
+    "id" SERIAL NOT NULL,
+    "userId" INTEGER NOT NULL,
+    "tweetId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -51,21 +51,21 @@ CREATE TABLE "Bookmark" (
 );
 
 -- CreateTable
-CREATE TABLE "Twitt" (
-    "id" BIGSERIAL NOT NULL,
-    "authorId" BIGINT NOT NULL,
+CREATE TABLE "Tweet" (
+    "id" SERIAL NOT NULL,
+    "authorId" INTEGER NOT NULL,
     "text" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Twitt_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Tweet_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Comment" (
-    "id" BIGSERIAL NOT NULL,
-    "commentorId" BIGINT NOT NULL,
-    "twittId" BIGINT NOT NULL,
+    "id" SERIAL NOT NULL,
+    "commentorId" INTEGER NOT NULL,
+    "tweetId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -91,13 +91,13 @@ ALTER TABLE "UserConnection" ADD CONSTRAINT "UserConnection_followerId_fkey" FOR
 ALTER TABLE "Bookmark" ADD CONSTRAINT "Bookmark_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Bookmark" ADD CONSTRAINT "Bookmark_twittId_fkey" FOREIGN KEY ("twittId") REFERENCES "Twitt"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Bookmark" ADD CONSTRAINT "Bookmark_tweetId_fkey" FOREIGN KEY ("tweetId") REFERENCES "Tweet"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Twitt" ADD CONSTRAINT "Twitt_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Tweet" ADD CONSTRAINT "Tweet_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Comment" ADD CONSTRAINT "Comment_commentorId_fkey" FOREIGN KEY ("commentorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Comment" ADD CONSTRAINT "Comment_twittId_fkey" FOREIGN KEY ("twittId") REFERENCES "Twitt"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Comment" ADD CONSTRAINT "Comment_tweetId_fkey" FOREIGN KEY ("tweetId") REFERENCES "Tweet"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

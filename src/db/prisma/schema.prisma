@@ -14,25 +14,25 @@ datasource db {
 }
 
 model User {
-  id         BigInt           @id @default(autoincrement())
-  email      String           @unique
-  password   String
-  profile    Profile?
-  bookmark   Bookmark[]
-  twitt      Twitt[]
-  comment    Comment[]
-  followings UserConnection[] @relation(name: "targetUser")
-  fallowers  UserConnection[] @relation(name: "follower")
-  createdAt  DateTime         @default(now())
+  id                Int              @id @default(autoincrement())
+  email             String           @unique
+  encryptedPassword String
+  profile           Profile?
+  bookmark          Bookmark[]
+  tweet             Tweet[]
+  comment           Comment[]
+  followings        UserConnection[] @relation(name: "targetUser")
+  fallowers         UserConnection[] @relation(name: "follower")
+  createdAt         DateTime         @default(now())
 }
 
 model Profile {
-  userId         BigInt    @id
+  userId         Int       @id
   user           User      @relation(fields: [userId], references: [id])
-  followersCount Int
-  followingCount Int
-  nickName       String
-  discription    String
+  followersCount Int       @default(0)
+  followingCount Int       @default(0)
+  nickName       String    @unique
+  description    String    @default("")
   birth          DateTime?
   profileImgSrc  String?
   bgImgSrc       String?
@@ -41,12 +41,12 @@ model Profile {
 }
 
 model UserConnection {
-  id           BigInt           @id @default(autoincrement())
+  id           Int              @id @default(autoincrement())
   targetUser   User             @relation(name: "targetUser", fields: [targetUserId], references: [id])
   follower     User             @relation(name: "follower", fields: [followerId], references: [id])
   status       ConnectionStatus
-  targetUserId BigInt
-  followerId   BigInt
+  targetUserId Int
+  followerId   Int
   createdAt    DateTime         @default(now())
   updatedAt    DateTime         @updatedAt
 
@@ -54,19 +54,19 @@ model UserConnection {
 }
 
 model Bookmark {
-  id        BigInt   @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   user      User     @relation(fields: [userId], references: [id])
-  twitt     Twitt    @relation(fields: [twittId], references: [id])
-  userId    BigInt
-  twittId   BigInt
+  tweet     Tweet    @relation(fields: [tweetId], references: [id])
+  userId    Int
+  tweetId   Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model Twitt {
-  id        BigInt     @id @default(autoincrement())
+model Tweet {
+  id        Int        @id @default(autoincrement())
   author    User       @relation(fields: [authorId], references: [id])
-  authorId  BigInt
+  authorId  Int
   text      String
   bookmark  Bookmark[]
   comment   Comment[]
@@ -75,11 +75,11 @@ model Twitt {
 }
 
 model Comment {
-  id          BigInt   @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   author      User     @relation(fields: [commentorId], references: [id])
-  twitt       Twitt    @relation(fields: [twittId], references: [id])
-  commentorId BigInt
-  twittId     BigInt
+  tweet       Tweet    @relation(fields: [tweetId], references: [id])
+  commentorId Int
+  tweetId     Int
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
